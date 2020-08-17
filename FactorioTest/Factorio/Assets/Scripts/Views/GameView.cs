@@ -13,8 +13,11 @@ public class GameView : MonoBehaviour
 
     private string GroundPath = "Prefabs/Tiles/";
     private string BuildingPath = "Prefabs/Buildings/";
+    private string ItemPath = "Prefabs/Items/";
 
     private GameObject[,] tileGameObjects;
+    private GameObject[,] buildingGameObjects;
+    private GameObject[,] itemGameObjects;
 
     void Start()
     {
@@ -24,6 +27,8 @@ public class GameView : MonoBehaviour
         gameController = new GameController(rows, cols);
 
         tileGameObjects = new GameObject[rows, cols];
+        buildingGameObjects = new GameObject[rows, cols];
+        itemGameObjects = new GameObject[rows, cols];
 
         RenderEverything();
     }
@@ -38,6 +43,7 @@ public class GameView : MonoBehaviour
     {
         RenderTiles();
         RenderBuildings();
+        RenderItems();
     }
 
     private void RenderTiles()
@@ -68,18 +74,42 @@ public class GameView : MonoBehaviour
         {
             for (int col = 0; col < gameModel.Cols; col++)
             {
-                if(gameModel.Tiles[row, col].Building == null)
+                if (gameModel.Tiles[row, col].Building == null)
                 {
                     continue;
                 }
 
                 GameObject buildingNowPrefab = Resources.Load<GameObject>(BuildingPath + gameModel.Tiles[row, col].Building.BuildingType.ToString());
 
-                tileGameObjects[row, col] = (GameObject)GameObject.Instantiate(buildingNowPrefab, new Vector3(row, col), Quaternion.identity);
-                tileGameObjects[row, col].name = $"{row}, {col}";
-                tileGameObjects[row, col].transform.parent = buildings.transform;
+                buildingGameObjects[row, col] = (GameObject)GameObject.Instantiate(buildingNowPrefab, new Vector3(row, col), Quaternion.identity);
+                buildingGameObjects[row, col].name = $"{row}, {col}";
+                buildingGameObjects[row, col].transform.parent = buildings.transform;
 
                 RotateGameObjectByDirection(tileGameObjects[row, col], gameModel.Tiles[row, col].Building.Direction);
+            }
+        }
+    }
+
+    private void RenderItems()
+    {
+        GameModel gameModel = gameController.GetGameModel();
+
+        GameObject items = new GameObject("Items");
+
+        for (int row = 0; row < gameModel.Rows; row++)
+        {
+            for (int col = 0; col < gameModel.Cols; col++)
+            {
+                if (gameModel.Tiles[row, col].Item == null)
+                {
+                    continue;
+                }
+
+                GameObject itemNowPrefab = Resources.Load<GameObject>(ItemPath + gameModel.Tiles[row, col].Item.ItemType.ToString());
+
+                itemGameObjects[row, col] = (GameObject)GameObject.Instantiate(itemNowPrefab, new Vector3(row, col), Quaternion.identity);
+                itemGameObjects[row, col].name = $"{row}, {col}";
+                itemGameObjects[row, col].transform.parent = items.transform;
             }
         }
     }

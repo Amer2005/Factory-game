@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Models.Buildings;
+using Assets.Scripts.Models;
 
 namespace Assets.Scripts.Services
 {
@@ -33,6 +34,7 @@ namespace Assets.Scripts.Services
             }
 
             tiles[0, 0].Building = buildingFactory.CreateBuilding(BuildingType.ConveyorBelt, DirectionType.right);
+            tiles[0, 0].Item = new ItemModel(ItemType.IronOre);
 
             return tiles;
         }

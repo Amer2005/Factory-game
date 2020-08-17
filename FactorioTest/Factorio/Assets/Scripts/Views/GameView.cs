@@ -24,6 +24,9 @@ public class GameView : MonoBehaviour
     private float ConveyorUpdateTime = 0;
     private float ConveyorPeriod = 1;
 
+    private GameObject selected;
+    private GameObject buildings;
+
     void Start()
     {
         int rows = 10;
@@ -34,6 +37,8 @@ public class GameView : MonoBehaviour
         tileGameObjects = new GameObject[rows, cols];
         buildingGameObjects = new GameObject[rows, cols];
         itemGameObjects = new GameObject[rows, cols];
+
+        selected = GameObject.FindGameObjectWithTag("Selected");
 
         RenderEverything();
     }
@@ -50,6 +55,20 @@ public class GameView : MonoBehaviour
             gameController.UpdateConveyorBelts();
 
             RenderItems();
+        }
+
+        Inputs();
+
+        selected.transform.position = new Vector3(Mathf.Round(Camera.main.ScreenToWorldPoint(Input.mousePosition).x), Mathf.Round(Camera.main.ScreenToWorldPoint(Input.mousePosition).y));
+    }
+
+    private void Inputs()
+    {
+        if(Input.GetMouseButtonDown(1))
+        {
+            gameController.BreakBuilding((int)selected.transform.position.x, (int)selected.transform.position.y);
+            Debug.Log("Right click");
+            RenderBuildings();
         }
     }
 
@@ -82,7 +101,9 @@ public class GameView : MonoBehaviour
     {
         GameModel gameModel = gameController.GetGameModel();
 
-        GameObject buildings = new GameObject("Buildings");
+        Destroy(buildings);
+
+        buildings = new GameObject("Buildings");
 
         for (int row = 0; row < gameModel.Rows; row++)
         {
@@ -99,7 +120,7 @@ public class GameView : MonoBehaviour
                 buildingGameObjects[row, col].name = $"{row}, {col}";
                 buildingGameObjects[row, col].transform.parent = buildings.transform;
 
-                RotateGameObjectByDirection(tileGameObjects[row, col], gameModel.Tiles[row, col].Building.Direction);
+                RotateGameObjectByDirection(buildingGameObjects[row, col], gameModel.Tiles[row, col].Building.Direction);
             }
         }
     }

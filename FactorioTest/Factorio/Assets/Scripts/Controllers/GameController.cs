@@ -17,6 +17,7 @@ namespace Assets.Scripts.Controllers
 
         private TileService tileService;
         private ConveyorBeltService conveyorBeltService;
+        private BuildingService buildingService;
 
         public GameController(int rows, int cols)
         {
@@ -24,6 +25,7 @@ namespace Assets.Scripts.Controllers
             this.cols = cols;
             this.tileService = new TileService();
             this.conveyorBeltService = new ConveyorBeltService();
+            this.buildingService = new BuildingService();
         }
 
         public GameModel GetGameModel()
@@ -40,6 +42,11 @@ namespace Assets.Scripts.Controllers
         public void UpdateConveyorBelts()
         {
             conveyorBeltService.UpdateConveyorBelts(GetGameModel());
+        }
+
+        public void BreakBuilding(int row, int col)
+        {
+            buildingService.RemoveBuilding(row, col, GetGameModel());
         }
     }
 }
